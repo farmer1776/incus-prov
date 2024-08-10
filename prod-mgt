@@ -1,0 +1,93 @@
+config:
+  cloud-init.user-data: |
+    ## template: jinja
+    #cloud-config
+    {% set u1 = 'foobar1' %}
+    {% set u1pass = '$6$10023$V7WVs0dvqqHmChmg68.MjqbuxdaR/XdpoyOi7pScJexSBt3AGy3DX.I5ntJWlEk79W.bkS9KHzhnwQvVv1anu1' %}
+    {% set u1key = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/XJs1zPa6r6n79amqgPZXxD3kWnMIYm9y0E+o8KqOO gitexample-ed25519-20240801' %}
+    {% set u2 = 'ansible' %}
+    {% set u2pass = '$6$10023$V7WVs0dvqqHmChmg68.MjqbuxdaR/XdpoyOi7pScJexSBt3AGy3DX.I5ntJWlEk79W.bkS9KHzhnwQvVv1anu1' %}
+    {% set u2key = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH/XJs1zPa6r6n79amqgPZXxD3kWnMIYm9y0E+o8KqOO gitexample-ed25519-20240801' %}
+    locale: en_US.UTF-8
+    timezone: America/New_York
+    runcmd:
+      - mkdir /mnt/v-nas
+      - mkdir /mnt/home
+      - date > /etc/birth_certificate
+    rsyslog:
+      remotes:
+        log_serv: "192.168.87.32:5140"
+    {% if distro == 'rocky' or distro == 'centos' or distro == 'ol' or distro == 'almalinux' or distro == 'fedora' %}
+    {% set group = 'wheel' %}
+    repo_update: true
+    repo_upgrade: all
+    yum_repos:
+      epel-release:
+        name: Extra Packages for Enterprise Linux 9 - Release
+        baseurl: http://download.fedoraproject.org/pub/epel/9/Everything/$basearch
+        enabled: true
+        failovermethod: priority
+        gpgcheck: true
+        gpgkey: http://download.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9
+    package_upgrade: true
+    packages:
+      - htop
+      - nano
+      - rsyslog
+      - openssh-server
+    users:
+      - name: {{ u1 }}
+        groups: {{ group }}
+        lock_passwd: false
+        passwd: {{ u1pass }}
+        ssh_authorized_keys:
+          - {{ u1key }}
+        shell: /bin/bash
+      - name: {{ u2 }}
+        groups: {{ group }}
+        lock_passwd: false
+        passwd: {{ u2pass }}
+        ssh_authorized_keys:
+          - {{ u2key }}
+        shell: /bin/bash
+    {% elif distro == 'ubuntu' or distro == 'debian' %}
+    {% set group = 'sudo' %}
+    package_update: true
+    package_upgrade: true
+    packages:
+      - htop
+      - nano
+      - build-essential
+      - rsyslog
+      - openssh-server
+    users:
+      - name: {{ u1 }}
+        groups: {{ group }}
+        lock_passwd: false
+        passwd: {{ u1pass }}
+        ssh_authorized_keys:
+          - {{ u1key }}
+        shell: /bin/bash
+      - name: {{ u2 }}
+        groups: {{ group }}
+        lock_passwd: false
+        passwd: {{ u2pass }}
+        ssh_authorized_keys:
+          - {{ u2key }}
+        shell: /bin/bash
+    {%- endif %}
+description: Basic Incus profile for lab
+devices:
+  eth0:
+    name: eth0
+    nictype: bridged
+    parent: br1
+    type: nic
+  root:
+    path: /
+    pool: pool1
+    type: disk
+  v-nas:
+    path: /mnt/v-nas
+    source: /mnt/lxd
+    type: disk
