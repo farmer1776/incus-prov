@@ -6,7 +6,7 @@ Small script to provision Incus/LXD system containers for the lab
 
 * Example files provided
 * User password for this example: FOSS2024
-* Private key if needed:
+* Private SSH key if needed:
 
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -17,7 +17,10 @@ AAAEBaQbIcoi6JA1mcihFgJiRxeUlaMTSLuGYS64EdIr3Q0H/XJs1zPa6r6n79amqgPZXx
 D3kWnMIYm9y0E+o8KqOOAAAAG2dpdGV4YW1wbGUtZWQyNTUxOS0yMDI0MDgwMQEC
 -----END OPENSSH PRIVATE KEY-----
 ```
-NOTE: Do not use these creds in production this is for prototype lab testing use
+NOTE: Do not use these creds in production this is for prototype lab testing use ONLY. Generate new keys and password hashes before use in production. 
+- Example: openssl passwd -6 -salt 177600 FOSS2024
+- Example: ssh-keygen -a 100 -t ed25519 -f "gitexample-ed25519-20240801" -C "gitexample-ed25519-20240801"
+
 
 Example provision list will spin up various containers this has been tested with, using a profile called prod-mgt which can be specified in this file
 File is laid out: Name,IP_address,profile,cloud image
