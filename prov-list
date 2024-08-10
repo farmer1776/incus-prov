@@ -1,0 +1,8 @@
+Bookworm,192.168.0.217,prod-mgt,debian/12/cloud
+Noble1,192.168.0.218,prod-mgt,ubuntu/noble/cloud
+Jammy1,192.168.0.219,prod-mgt,ubuntu/jammy/cloud
+Centos9,192.168.0.220,prod-mgt,centos/9-Stream/cloud
+Alma9,192.168.0.221,prod-mgt,almalinux/9/cloud
+Oracle9,192.168.0.222,prod-mgt,oracle/9/cloud
+Rocky1,192.168.0.223,prod-mgt,rockylinux/9/cloud
+Fedora40,192.168.0.224,prod-mgt,fedora/40/cloud
